@@ -10,6 +10,7 @@ devDependency spec
 devDependency assert
 devDependency expect
 devDependency run-command
+devDependency map
 
 # Currently unsupported
 # devDependency command: curl

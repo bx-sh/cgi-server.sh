@@ -1,0 +1,5 @@
+#! /usr/bin/env bx
+
+import @map
+
+# do something with map
