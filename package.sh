@@ -4,7 +4,7 @@ description "🔌 Connecting BASH to the web!"
 
 main cgi-server.sh
 
-exclude spec/
+exclude spec/ *.cgi
 
 devDependency spec
 devDependency assert
