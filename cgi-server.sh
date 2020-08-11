@@ -64,6 +64,7 @@ Your adapter is responsible for parsing and handling any provided arguments.
   if [ -z "$adapter" ]
   then
     # hard-coded support for ruby (and others when implemented)
+    # ruby is the first adapter implemented because it comes out-of-the-box with Mac OS X
     if [ -f "${BASH_SOURCE[0]%cgi-server.sh}adapters/ruby.sh" ] && which ruby &>/dev/null
     then
       source "${BASH_SOURCE[0]%cgi-server.sh}adapters/ruby.sh"
