@@ -2,6 +2,8 @@ name cgi-server
 
 description "🔌 Connecting BASH to the web!"
 
+version "$( grep VERSION= cgi-server.sh | sed 's/.*VERSION=\(.*\)/\1/' | sed 's/"//g' )"
+
 main cgi-server.sh
 
 exclude spec/ *.cgi
