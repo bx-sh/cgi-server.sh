@@ -1,7 +1,8 @@
+import @cgi-server
 import @cgi-server/adapters/ruby
 
 ##
-# Test running Ruby CGI adapter directly, test its private interface
+# Test running Ruby CGI adapter via cgi-server --adapter ruby
 ##
 
 stopRunningInstances() {
@@ -13,56 +14,32 @@ stopRunningInstances() {
   return 0
 }
 
-@example.not_running() {
-  refute run curl -i http://localhost:$PORT1
-  expect "$STDOUT" toBeEmpty
-  expect "$STDERR" toContain "Failed to connect to localhost port $PORT1: Connection refused"
-}
-
-@example.no_arguments() {
-  refute run rubyCgiAdapter
-  expect "$STDOUT" toBeEmpty
-  expect "$STDERR" toContain "Missing required" "start" "stop"
-}
-
-@example.command_not_found() {
-  refute run rubyCgiAdapter foo
-  expect "$STDOUT" toBeEmpty
-  expect "$STDERR" toContain "Unsupported" "command" "foo" "start" "stop"
-}
-
-@example.start.no_arguments() {
-  refute run rubyCgiAdapter start
-  expect "$STDOUT" toBeEmpty
-  expect "$STDERR" toContain "Missing" "CGI script"
-}
-
 @example.start.file_not_found() {
-  refute run rubyCgiAdapter start i-dont-exist.sh
+  refute run cgi-server start --adapter ruby i-dont-exist.sh
   expect "$STDOUT" toBeEmpty
   expect "$STDERR" toContain "Unsupported" "i-dont-exist.sh" "Expected" "CGI script"
 }
 
 @example.stop.no_arguments() {
-  refute run rubyCgiAdapter stop
+  refute run cgi-server stop --adapter ruby
   expect "$STDOUT" toBeEmpty
   expect "$STDERR" toContain "Missing" "server identifier" "returned" "start"
 }
 
 @example.stop.not_running() {
-  refute run rubyCgiAdapter stop 123789
+  refute run cgi-server stop --adapter ruby 123789
   expect "$STDOUT" toBeEmpty
   expect "$STDERR" toContain "No" "running" "instance"
 }
 
 @example.stop.invalid_looking_pid() {
-  refute run rubyCgiAdapter stop abc123
+  refute run cgi-server stop --adapter ruby abc123
   expect "$STDOUT" toBeEmpty
   expect "$STDERR" toContain "Invalid" "numeric"
 }
 
 @example.start.file_not_executable() {
-  refute run rubyCgiAdapter start spec/scripts/not_executable
+  refute run cgi-server start --adapter ruby spec/scripts/not_executable
   expect "$STDOUT" toBeEmpty
   expect "$STDERR" toContain "executable" "chmod +x"
 }
@@ -72,7 +49,7 @@ stopRunningInstances() {
 
   refute run curl -i http://127.0.0.1:$PORT1/
 
-  assert run rubyCgiAdapter start "spec/scripts/$script_name" --port "$PORT1" --host "$HOST"
+  assert run cgi-server start --adapter ruby "spec/scripts/$script_name" --port "$PORT1" --host "$HOST"
   expect "$STDERR" toContain "Running" "CGI" "http://$HOST:$PORT1"
   expect "$STDOUT" toMatch [0-9]+
 
@@ -85,7 +62,7 @@ stopRunningInstances() {
   expect "$STDOUT" toContain "Hello, world!"
   expect "$STDOUT" toContain "200 OK"
 
-  assert run rubyCgiAdapter stop "$serverId"
+  assert run cgi-server stop --adapter ruby "$serverId"
   expect "$STDOUT" toBeEmpty
   expect "$STDERR" toContain "Stopped"
 
@@ -97,7 +74,7 @@ stopRunningInstances() {
 
   refute run curl -i http://127.0.0.1:$PORT2/
 
-  assert run rubyCgiAdapter start "spec/scripts/$script_name" --port "$PORT2" --host "$HOST"
+  assert run cgi-server start --adapter ruby "spec/scripts/$script_name" --port "$PORT2" --host "$HOST"
   expect "$STDERR" toContain "Running" "CGI" "http://$HOST:$PORT2"
   expect "$STDOUT" toMatch [0-9]+
 
@@ -110,7 +87,7 @@ stopRunningInstances() {
   expect "$STDOUT" toContain "Hello, world!"
   expect "$STDOUT" toContain "200 OK"
 
-  assert run rubyCgiAdapter stop "$serverId"
+  assert run cgi-server stop --adapter ruby "$serverId"
   expect "$STDOUT" toBeEmpty
   expect "$STDERR" toContain "Stopped"
 
@@ -122,7 +99,7 @@ stopRunningInstances() {
 
   refute run curl -i http://127.0.0.1:$PORT1/
 
-  assert run rubyCgiAdapter start "spec/scripts/$script_name" --port "$PORT1" --host "$HOST"
+  assert run cgi-server start --adapter ruby "spec/scripts/$script_name" --port "$PORT1" --host "$HOST"
   expect "$STDERR" toContain "Running" "CGI" "http://$HOST:$PORT1"
   expect "$STDOUT" toMatch [0-9]+
 
@@ -137,7 +114,7 @@ stopRunningInstances() {
   expect "$STDOUT" toContain "Goodnight, moon!"
   expect "$STDOUT" toContain "404 Not Found"
 
-  assert run rubyCgiAdapter stop "$serverId"
+  assert run cgi-server stop --adapter ruby "$serverId"
   expect "$STDOUT" toBeEmpty
   expect "$STDERR" toContain "Stopped"
 

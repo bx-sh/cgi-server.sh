@@ -4,17 +4,17 @@ cgi-server() {
 
 Usage:
 
-  cgi-server run my-script.cgi
+  cgi-server start my-script.cgi
 
-  cgi-server run my-script.cgi -p 8080
+  cgi-server start my-script.cgi -p 8080
 
-  cgi-server run my-script.cgi --port 8080 -h 0.0.0.0
+  cgi-server start my-script.cgi --port 8080 -h 0.0.0.0
 
-  cgi-server run my-script.cgi --adapter ruby
+  cgi-server start my-script.cgi --adapter ruby
 
-  cgi-server run my-script.cgi --adapter uwsgi
+  cgi-server start my-script.cgi --adapter uwsgi
 
-  cgi-server run my-script.cgi --adapter [custom]
+  cgi-server start my-script.cgi --adapter [custom]
 
 Default port: 8080
 
@@ -38,5 +38,42 @@ Your adapter is responsible for parsing and handling any provided arguments.
 
   [ "$1" = "--version" ] && { echo "cgi-server version $VERSION"; return 0; } 
   ([ "$1" = "-h" ] || [ "$1" = "--help" ]) && { echo "$USAGE"; return 0; }
-  [ $# -eq 0 ] && { echo "Missing required argument for cgi-server: [run]\n\n$USAGE" >&2; return 1; }
+  [ $# -eq 0 ] && { echo "Missing required argument for cgi-server: [start|stop]\n\n$USAGE" >&2; return 1; }
+  [ "$1" != "start" ] && [ "$1" != "stop" ] && { echo "Unexpected cgi-server command: $1. Expected 'start' or 'stop'." >&2; return 1; }
+
+  # Either auto-detect or use provided adapter
+  local adapter=""
+
+  # Arguments to pass-thru to adapter (everything but --adapter argument)
+  declare adapterArguments=()
+  while [ $# -gt 0 ]
+  do
+    if [ "$1" == "--adapter" ]
+    then
+      shift
+      adapter="$1"
+      shift
+    else
+      adapterArguments+=("$1")
+      shift
+    fi
+  done
+
+  if [ -z "$adapter" ]
+  then
+    # hard-coded support for ruby (and others when implemented)
+    if which ruby &>/dev/null
+    then
+      import @cgi-server/adapters/ruby
+      adapter=ruby
+    else
+      echo "No --adapter provided and no available CGI adapters auto-detected (ruby missing on system)" >&2
+      return 1
+    fi
+  fi
+
+  local adapterFunction="${adapter}CgiAdapter"
+
+  # Delegate to adapter
+  "$adapterFunction" "${adapterArguments[@]}"
 }
