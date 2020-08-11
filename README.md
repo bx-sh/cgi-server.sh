@@ -4,6 +4,17 @@ Connecting BASH to the web!
 
 ---
 
+Download the [latest version](https://github.com/bx-sh/cgi-server.sh/archive/v0.1.0.tar.gz)
+
+```sh
+$ PATH="$PATH:cgi-server/bin"
+
+$ cgi-server --version
+cgi-server version 0.1.0
+```
+
+---
+
 ```sh
 $ ./bin/cgi-server start helloWorld.cgi
 # Running CGI script [helloWorld.cgi]
