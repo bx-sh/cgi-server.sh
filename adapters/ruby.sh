@@ -68,11 +68,13 @@ rubyCgiAdapter() {
         fi
       done
 
-      echo "$pid"
-
       echo "Running CGI script [$cgi_script]" >&2
-      echo "Server identifier [$pid]" >&2
       echo "http://$host:$port/" >&2
+
+      printf "Server identifier: " >&2
+      printf "$pid"
+      echo
+
       return 0
       ;;
 
