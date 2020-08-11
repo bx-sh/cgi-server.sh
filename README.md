@@ -42,3 +42,21 @@ $ bin/cgi-server --help
 #
 # Your adapter is responsible for parsing and handling any provided arguments.
 ```
+
+---
+
+```sh
+$ ./bin/cgi-server start helloWorld.cgi
+# Running CGI script [helloWorld.cgi]
+# http://127.0.0.1:8080/
+# Server identifier: 886841
+
+$ curl http://localhost:8080/
+# Hello, world!
+
+$ ./bin/cgi-server stop 886841
+# Stopped CGI script [886841]
+
+$ curl http://localhost:8080/
+# curl: (7) Failed to connect to localhost port 8080: Connection refused
+```
