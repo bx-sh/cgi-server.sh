@@ -5,6 +5,30 @@ Connecting BASH to the web!
 ---
 
 ```sh
+$ ./bin/cgi-server start helloWorld.cgi
+# Running CGI script [helloWorld.cgi]
+# http://127.0.0.1:8080/
+# Server identifier: 886841
+```
+
+```sh
+$ curl http://localhost:8080/
+# Hello, world!
+```
+
+```sh
+$ ./bin/cgi-server stop 886841
+# Stopped CGI script [886841]
+```
+
+```sh
+$ curl http://localhost:8080/
+# curl: (7) Failed to connect to localhost port 8080: Connection refused
+```
+
+---
+
+```sh
 $ bin/cgi-server --help
 
 # Usage:
@@ -44,19 +68,3 @@ $ bin/cgi-server --help
 ```
 
 ---
-
-```sh
-$ ./bin/cgi-server start helloWorld.cgi
-# Running CGI script [helloWorld.cgi]
-# http://127.0.0.1:8080/
-# Server identifier: 886841
-
-$ curl http://localhost:8080/
-# Hello, world!
-
-$ ./bin/cgi-server stop 886841
-# Stopped CGI script [886841]
-
-$ curl http://localhost:8080/
-# curl: (7) Failed to connect to localhost port 8080: Connection refused
-```
