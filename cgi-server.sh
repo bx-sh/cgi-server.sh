@@ -64,9 +64,9 @@ Your adapter is responsible for parsing and handling any provided arguments.
   if [ -z "$adapter" ]
   then
     # hard-coded support for ruby (and others when implemented)
-    if which ruby &>/dev/null
+    if [ -f "${BASH_SOURCE[0]%cgi-server.sh}adapters/ruby.sh" ] && which ruby &>/dev/null
     then
-      import @cgi-server/adapters/ruby
+      source "${BASH_SOURCE[0]%cgi-server.sh}adapters/ruby.sh"
       adapter=ruby
     else
       echo "No --adapter provided and no available CGI adapters auto-detected (ruby missing on system)" >&2
