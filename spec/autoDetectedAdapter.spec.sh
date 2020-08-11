@@ -15,9 +15,6 @@ import @cgi-server
 
   local serverId="$STDOUT"
 
-  # Give it a moment
-  sleep 1
-
   assert run curl -i http://$HOST:$PORT1/
   expect "$STDOUT" toContain "Hello, world!"
   expect "$STDOUT" toContain "200 OK"
@@ -40,9 +37,6 @@ import @cgi-server
 
   local serverId="$STDOUT"
 
-  # Give it a moment
-  sleep 1
-
   assert run curl -i http://$HOST:$PORT2/
   expect "$STDOUT" toContain "Hello, world!"
   expect "$STDOUT" toContain "200 OK"
@@ -64,9 +58,6 @@ import @cgi-server
   expect "$STDOUT" toMatch [0-9]+
 
   local serverId="$STDOUT"
-
-  # Give it a moment
-  sleep 1
 
   assert run curl -i http://$HOST:$PORT1/
   expect "$STDOUT" not toContain "Hello, world!"

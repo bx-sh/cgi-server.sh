@@ -48,6 +48,26 @@ rubyCgiAdapter() {
       "$rubyServerScript" --host "$host" --port "$port" "$cgi_script" &>/dev/null &
       pid=$!
 
+      # Wait for it to start (requires curl)
+      # Wait ~5 seconds (50 attempts with 0.1 sleeps)
+      local timeout=50
+      local attempts=0
+      while true
+      do
+        (( attempts++ ))
+        if [ $attempts -gt $timeout ]
+        then
+          echo "runCgiAdapter error. Started script but cannot 'curl' running script successfully. Might be a problem with your CGI script or ruby is missing from your system." >&2
+          return 1
+        fi
+        if curl -i "http://$host:$port/" &>/dev/null
+        then
+          break
+        else
+          sleep 0.1
+        fi
+      done
+
       echo "$pid"
 
       echo "Running CGI script [$cgi_script]" >&2

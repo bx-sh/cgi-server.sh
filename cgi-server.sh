@@ -27,6 +27,8 @@ the following commands:
   myCgiAdapter start file.cgi     # must output server identifier, e.g. PID
                                   # and return 0 if server started successfully
                                   # else return non-zero with message in STDERR
+                                  # please block until your server is ready
+                                  # to receive requests (e.g. use curl to verify)
 
   myCgiAdapter stop [identifier]  # the id returned by 'start' is used by 'stop'
 
