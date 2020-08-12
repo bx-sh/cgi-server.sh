@@ -2,13 +2,13 @@
 
 ---
 
-Download the [latest version](https://github.com/bx-sh/cgi-server.sh/archive/v0.1.0.tar.gz)
+Download the [latest version](https://github.com/bx-sh/cgi-server.sh/archive/v0.1.1.tar.gz)
 
 ```sh
 $ PATH="$PATH:cgi-server/bin"
 
 $ cgi-server --version
-cgi-server version 0.1.0
+cgi-server version 0.1.1
 ```
 
 ---
