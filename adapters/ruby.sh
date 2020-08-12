@@ -73,7 +73,7 @@ rubyCgiAdapter() {
 
       printf "Server identifier: " >&2
       printf "$pid"
-      echo
+      echo >&2
 
       return 0
       ;;
