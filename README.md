@@ -1,6 +1,4 @@
-# 🔌 `@cgi-server`
-
-Connecting BASH to the web!
+# 🔌 Connecting BASH to the web!
 
 ---
 
