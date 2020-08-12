@@ -57,7 +57,7 @@ rubyCgiAdapter() {
         (( attempts++ ))
         if [ $attempts -gt $timeout ]
         then
-          echo "runCgiAdapter error. Started script but cannot 'curl' running script successfully. Might be a problem with your CGI script or ruby is missing from your system." >&2
+          echo "rubyCgiAdapter error. Started script but cannot 'curl' running script successfully. Might be a problem with your CGI script or ruby is missing from your system." >&2
           return 1
         fi
         if curl -i "http://$host:$port/" &>/dev/null

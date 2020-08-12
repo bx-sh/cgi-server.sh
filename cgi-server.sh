@@ -1,5 +1,5 @@
 cgi-server() {
-  VERSION=0.1.0
+  VERSION=0.1.1
   USAGE="cgi-server - 🔌 Connecting BASH to the web!
 
 Usage:
@@ -63,12 +63,16 @@ Your adapter is responsible for parsing and handling any provided arguments.
 
   if [ -z "$adapter" ]
   then
-    # hard-coded support for ruby (and others when implemented)
-    # ruby is the first adapter implemented because it comes out-of-the-box with Mac OS X
+    # Prefer ruby over uwsgi in auto-detection because uwsgi isn't always compiled with CGI support
+    # and all versions of Ruby work OK (including old versions and basically every Mac OS X Ruby version)
     if [ -f "${BASH_SOURCE[0]%cgi-server.sh}adapters/ruby.sh" ] && which ruby &>/dev/null
     then
       source "${BASH_SOURCE[0]%cgi-server.sh}adapters/ruby.sh"
       adapter=ruby
+    elif [ -f "${BASH_SOURCE[0]%cgi-server.sh}adapters/uwsgi.sh" ] && which uwsgi &>/dev/null
+    then
+      source "${BASH_SOURCE[0]%cgi-server.sh}adapters/uwsgi.sh"
+      adapter=uwsgi
     else
       echo "No --adapter provided and no available CGI adapters auto-detected (ruby missing on system)" >&2
       return 1
