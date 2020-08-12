@@ -90,7 +90,7 @@ uwsgiCgiAdapter() {
       local pid="$1"
 
       local runningPids=""
-      runningPids="$( ps a | grep "uwsgi" | grep -v grep | awk '{ print $1 }' )"
+      runningPids="$( ps ax | grep "uwsgi" | grep -v grep | awk '{ print $1 }' )"
       if [ -n "$runningPids" ]
       then
         if [[ "$runningPids" = *"$pid"* ]]
@@ -110,7 +110,7 @@ uwsgiCgiAdapter() {
               echo "uwsgiCgiAdapter error. Server was not stopped. Try running this command to reproduce: kill -s INT $pid" >&2
               return 1
             fi
-            runningPids="$( ps a | grep "uwsgi" | grep -v grep | awk '{ print $1 }' )"
+            runningPids="$( ps ax | grep "uwsgi" | grep -v grep | awk '{ print $1 }' )"
             if [[ "$runningPids" != *"$pid"* ]]
             then
               echo "Stopped CGI script [$pid]" >&2
