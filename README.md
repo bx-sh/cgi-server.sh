@@ -1,11 +1,22 @@
-# 🔌 `@cgi-server`
-
-Connecting BASH to the web!
+# 🔌 Connecting BASH to the web!
 
 ---
 
+Download the [latest version](https://github.com/bx-sh/cgi-server.sh/archive/v0.1.0.tar.gz)
+
 ```sh
-$ ./bin/cgi-server start helloWorld.cgi
+$ PATH="$PATH:cgi-server/bin"
+
+$ cgi-server --version
+cgi-server version 0.1.0
+```
+
+---
+
+### `cgi-server start my-cgi-script.sh`
+
+```sh
+$ cgi-server start helloWorld.cgi
 # Running CGI script [helloWorld.cgi]
 # http://127.0.0.1:8080/
 # Server identifier: 886841
@@ -16,8 +27,10 @@ $ curl http://localhost:8080/
 # Hello, world!
 ```
 
+### `cgi-server stop [server identifier]`
+
 ```sh
-$ ./bin/cgi-server stop 886841
+$ cgi-server stop 886841
 # Stopped CGI script [886841]
 ```
 
