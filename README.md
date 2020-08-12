@@ -13,6 +13,8 @@ cgi-server version 0.1.0
 
 ---
 
+### `cgi-server start my-cgi-script.sh`
+
 ```sh
 $ ./bin/cgi-server start helloWorld.cgi
 # Running CGI script [helloWorld.cgi]
@@ -24,6 +26,8 @@ $ ./bin/cgi-server start helloWorld.cgi
 $ curl http://localhost:8080/
 # Hello, world!
 ```
+
+### `cgi-server stop [server identifier]`
 
 ```sh
 $ ./bin/cgi-server stop 886841
