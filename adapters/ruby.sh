@@ -86,8 +86,8 @@ rubyCgiAdapter() {
       local pid="$1"
 
       local runningPids=""
-      runningPids="$( ps -C "ruby $rubyServerScript" -o pid= )"
-      if [ $? -eq 0 ]
+      runningPids="$( ps a | grep "ruby $rubyServerScript" | grep -v grep | awk '{ print $1 }' )"
+      if [ -n "$runningPids" ]
       then
         if [[ "$runningPids" = *"$pid"* ]]
         then
@@ -96,15 +96,24 @@ rubyCgiAdapter() {
           kill -s INT "$pid"
 
           # Verify it's not still running
-          runningPids="$( ps -C "ruby $rubyServerScript" -o pid= )"
-          if [[ "$runningPids" = *"$pid"* ]]
-          then
-            echo "rubyCgiAdapter error. Server was not stopped. Try running this command to reproduce: kill -s INT $pid" >&2
-            return 1
-          else
-            echo "Stopped CGI script [$pid]" >&2
-            return 0
-          fi
+          local timeout=100
+          local attempts=0
+          while true
+          do
+            (( attempts++ ))
+            if [ $attempts -gt $timeout ]
+            then
+              echo "rubyCgiAdapter error. Server was not stopped. Try running this command to reproduce: kill -s INT $pid" >&2
+              return 1
+            fi
+            runningPids="$( ps a | grep "ruby $rubyServerScript" | grep -v grep | awk '{ print $1 }' )"
+            if [[ "$runningPids" != *"$pid"* ]]
+            then
+              echo "Stopped CGI script [$pid]" >&2
+              return 0
+            fi
+            sleep 0.1
+          done
 
         else
           echo "rubyCgiAdapter instance not running: $pid" >&2

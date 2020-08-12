@@ -1,5 +1,5 @@
 cgi-server() {
-  VERSION=0.1.1
+  VERSION=0.1.2
   USAGE="cgi-server - 🔌 Connecting BASH to the web!
 
 Usage:
