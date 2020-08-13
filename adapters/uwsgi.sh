@@ -1,10 +1,56 @@
 uwsgiCgiAdapter() {
-  [ $# -eq 0 ] && { echo "Missing required argument for uwsgiCgiAdapter: [start|stop]" >&2; return 1; }
+  [ $# -eq 0 ] && { echo "Missing required argument for uwsgiCgiAdapter: [run|start|stop]" >&2; return 1; }
 
   local command="$1"
   shift
 
   case "$command" in
+
+    run)
+      [ $# -eq 0 ] && { echo  "Missing required argument for uwsgiCgiAdapter run: [CGI script path]" >&2; return 1; }
+
+      local cgi_script=""
+      local port=8080
+      local host=127.0.0.1
+
+      while [ $# -gt 0 ]
+      do
+        if [ "$1" = "-p" ] || [ "$1" == "--port" ]
+        then
+          shift
+          port="$1"
+          shift
+        elif [ "$1" = "-h" ] || [ "$1" == "--host" ]
+        then
+          shift
+          host="$1"
+          shift
+        elif [ -f "$1" ]
+        then
+          if [ -x "$1" ]
+          then
+            cgi_script="$1"
+            shift
+          else
+            echo "CGI script found but not executable: $1. Please chmod +x this script and try again." >&2
+            return 1
+          fi
+        else
+          echo "Unsupported uwsgiCgiAdapter start argument: $1. Expected [CGI script path]." >&2
+          return 1
+        fi
+      done
+
+      # TODO add host option
+      # --host "$host" "$cgi_script" &>/dev/null &
+
+      local cgi_script_name="${cgi_script/*\/}"
+      local cgi_script_dir="${cgi_script%\/*}"
+      [ "$cgi_script_dir" = "$cgi_script_name" ] && cgi_script_dir="."
+
+      # Run uwsgi CGI server to host this CGI script - in foreground
+      uwsgi --master --processes 1 --plugins http,cgi --http :$port --http-modifier1 9 --cgi "$cgi_script_name" --chdir "$cgi_script_dir"
+      ;;
 
     start)
       [ $# -eq 0 ] && { echo  "Missing required argument for uwsgiCgiAdapter start: [CGI script path]" >&2; return 1; }
@@ -46,6 +92,7 @@ uwsgiCgiAdapter() {
 
       local cgi_script_name="${cgi_script/*\/}"
       local cgi_script_dir="${cgi_script%\/*}"
+      [ "$cgi_script_dir" = "$cgi_script_name" ] && cgi_script_dir="."
 
       # Run uwsgi CGI server to host this CGI script
       local pid=""
@@ -132,7 +179,7 @@ uwsgiCgiAdapter() {
       ;;
 
     *)
-      echo "Unsupported uwsgiCgiAdapter command: $command. Expected 'start' or 'stop'" >&2
+      echo "Unsupported uwsgiCgiAdapter command: $command. Expected 'run' or 'start' or 'stop'" >&2
       return 1
       ;;
 

@@ -1,5 +1,5 @@
 rubyCgiAdapter() {
-  [ $# -eq 0 ] && { echo "Missing required argument for rubyCgiAdapter: [start|stop]" >&2; return 1; }
+  [ $# -eq 0 ] && { echo "Missing required argument for rubyCgiAdapter: [run|start|stop]" >&2; return 1; }
 
   local command="$1"
   shift
@@ -7,6 +7,45 @@ rubyCgiAdapter() {
   local rubyServerScript="${BASH_SOURCE[0]/ruby.sh}ruby-cgi-server.rb"
 
   case "$command" in
+
+    run)
+      [ $# -eq 0 ] && { echo  "Missing required argument for rubyCgiAdapter run: [CGI script path]" >&2; return 1; }
+
+      local cgi_script=""
+      local port=8080
+      local host=127.0.0.1
+
+      while [ $# -gt 0 ]
+      do
+        if [ "$1" = "-p" ] || [ "$1" == "--port" ]
+        then
+          shift
+          port="$1"
+          shift
+        elif [ "$1" = "-h" ] || [ "$1" == "--host" ]
+        then
+          shift
+          host="$1"
+          shift
+        elif [ -f "$1" ]
+        then
+          if [ -x "$1" ]
+          then
+            cgi_script="$1"
+            shift
+          else
+            echo "CGI script found but not executable: $1. Please chmod +x this script and try again." >&2
+            return 1
+          fi
+        else
+          echo "Unsupported rubyCgiAdapter run argument: $1. Expected [CGI script path]." >&2
+          return 1
+        fi
+      done
+
+      # Run Ruby CGI server to host this CGI script - in foreground
+      "$rubyServerScript" --host "$host" --port "$port" "$cgi_script"
+      ;;
 
     start)
       [ $# -eq 0 ] && { echo  "Missing required argument for rubyCgiAdapter start: [CGI script path]" >&2; return 1; }
@@ -128,7 +167,7 @@ rubyCgiAdapter() {
       ;;
 
     *)
-      echo "Unsupported rubyCgiAdapter command: $command. Expected 'start' or 'stop'" >&2
+      echo "Unsupported rubyCgiAdapter command: $command. Expected 'run' or 'start' or 'stop'" >&2
       return 1
       ;;
 

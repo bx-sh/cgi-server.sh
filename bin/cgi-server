@@ -3,6 +3,7 @@ source "${BASH_SOURCE[0]%bin\/cgi-server}cgi-server.sh"
 if [ "$( type -t cgi-server )" = "function" ]
 then
   cgi-server "$@"
+  exit $?
 else
   echo "Could not load cgi-server.sh library" >&2
   exit 1

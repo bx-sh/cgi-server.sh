@@ -4,7 +4,11 @@ cgi-server() {
 
 Usage:
 
+  cgi-server run my-script.cgi
+
   cgi-server start my-script.cgi
+
+  cgi-server stop [server ID]
 
   cgi-server start my-script.cgi -p 8080
 
@@ -24,6 +28,8 @@ To provide a [custom] adapter, there must be a defined
 function named [custom]CgiAdapter which responds to
 the following commands:
 
+  myCgiAdapter run file.cgi       # runs in foreground and traps INT to shutdown
+
   myCgiAdapter start file.cgi     # must output server identifier, e.g. PID
                                   # and return 0 if server started successfully
                                   # else return non-zero with message in STDERR
@@ -40,11 +46,12 @@ Your adapter is responsible for parsing and handling any provided arguments.
 
   [ "$1" = "--version" ] && { echo "cgi-server version $VERSION"; return 0; } 
   ([ "$1" = "-h" ] || [ "$1" = "--help" ]) && { echo "$USAGE"; return 0; }
-  [ $# -eq 0 ] && { echo "Missing required argument for cgi-server: [start|stop]\n\n$USAGE" >&2; return 1; }
-  [ "$1" != "start" ] && [ "$1" != "stop" ] && { echo "Unexpected cgi-server command: $1. Expected 'start' or 'stop'." >&2; return 1; }
+  [ $# -eq 0 ] && { echo "Missing required argument for cgi-server: [run|start|stop]\n\n$USAGE" >&2; return 1; }
+  [ "$1" != "start" ] && [ "$1" != "stop" ] && [ "$1" != "run" ] && { echo "Unexpected cgi-server command: $1. Expected 'run' or 'start' or 'stop'." >&2; return 1; }
 
   # Either auto-detect or use provided adapter
-  local adapter=""
+  # Can set default via CGI_SERVER_ADAPTER=
+  local adapter="$CGI_SERVER_ADAPTER"
 
   # Arguments to pass-thru to adapter (everything but --adapter argument)
   declare adapterArguments=()
@@ -77,6 +84,12 @@ Your adapter is responsible for parsing and handling any provided arguments.
       echo "No --adapter provided and no available CGI adapters auto-detected (ruby missing on system)" >&2
       return 1
     fi
+  elif [ "$adapter" = "ruby" ]
+  then
+    source "${BASH_SOURCE[0]%cgi-server.sh}adapters/ruby.sh"
+  elif [ "$adapter" = "uwsgi" ]
+  then
+    source "${BASH_SOURCE[0]%cgi-server.sh}adapters/uwsgi.sh"
   fi
 
   local adapterFunction="${adapter}CgiAdapter"
